@@ -24,8 +24,7 @@ app.add_middleware(
 
 # Hugging Face API details
 # Get token from .env
-API_TOKEN = os.getenv("HF_API_TOKEN")  # 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    use this for testing
-print("api token is: ",API_TOKEN)
+API_TOKEN = os.getenv("HF_API_TOKEN") 
 MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"
 API_URL = f"https://api-inference.huggingface.co/models/{MODEL_ID}"
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
