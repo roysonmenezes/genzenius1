@@ -4,6 +4,12 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import requests
 from deep_translator import GoogleTranslator
+import os
+from dotenv import load_dotenv
+from pathlib import Path
+
+env_path = Path(__file__).parent / ".env"
+load_dotenv(dotenv_path=env_path)
 
 app = FastAPI()
 
@@ -17,7 +23,9 @@ app.add_middleware(
 )
 
 # Hugging Face API details
-API_TOKEN = "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"  # Replace with your token
+# Get token from .env
+API_TOKEN = os.getenv("HF_API_TOKEN")  # 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    use this for testing
+print("api token is: ",API_TOKEN)
 MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"
 API_URL = f"https://api-inference.huggingface.co/models/{MODEL_ID}"
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
