@@ -11,3 +11,4 @@ backend/venv/
 .DS_Store
 Thumbs.db
 app/.env
+app/audio/

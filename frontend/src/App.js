@@ -5,6 +5,7 @@ function App() {
   const [prompt, setPrompt] = useState('');
   const [result, setResult] = useState('');
   const [language, setLanguage] = useState('en');
+  const [audioUrl, setAudioUrl] = useState('');
 
   const handleInputChange = (e) => {
     setPrompt(e.target.value);
@@ -15,36 +16,43 @@ function App() {
   };
 
   const handleGenerate = async () => {
-  setResult("Generating...");
-  try {
-    const response = await fetch('http://localhost:8000/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, language }),  // include language
-    });
-    const data = await response.json();
-    if (data.result) {
-      setResult(data.result);
-    } else {
-      setResult(data.error || "Error generating text.");
+    setResult("Generating...");
+    setAudioUrl(""); // Clear previous audio
+    try {
+      const response = await fetch('http://localhost:8000/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, language }),
+      });
+      const data = await response.json();
+      if (data.result) {
+        setResult(data.result);
+        if (data.audio_url) {
+          setAudioUrl(data.audio_url);
+        }
+      } else {
+        setResult(data.error || "Error generating text.");
+      }
+    } catch (error) {
+      setResult("Failed to connect to backend.");
     }
-  } catch (error) {
-    setResult("Failed to connect to backend.");
-  }
-};
-
+  };
 
   return (
     <div className="App">
-      <h2>Text Generation</h2>
+      <h2>Genzenius</h2>
       <label>
         Language:&nbsp;
         <select value={language} onChange={handleLanguageChange} style={{ fontSize: '18px' }}>
           <option value="en">English</option>
-          <option value="hi">Hindi</option>
-          <option value="es">Spanish</option>
-          <option value="fr">French</option>
-          <option value="de">German</option>
+          <option value="ta">தமிழ் (Tamil)</option>
+          <option value="kn">ಕನ್ನಡ (Kannada)</option>
+          <option value="ml">മലയാളം (Malayalam)</option>
+          <option value="bn">বাংলা (Bengali)</option>
+          <option value="gu">ગુજરાતી (Gujarati)</option>
+          <option value="mr">मराठी (Marathi)</option>
+          <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+          <option value="ur">اردو (Urdu)</option>
           {/* Add more languages as needed */}
         </select>
       </label>
@@ -59,13 +67,8 @@ function App() {
       <button onClick={handleGenerate} style={{ fontSize: '18px', marginLeft: '10px' }}>
         Generate
       </button>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginTop: '20px'
-        }}
-      >
+
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
         <div
           style={{
             width: '700px',
@@ -79,7 +82,16 @@ function App() {
             textAlign: 'center'
           }}
         >
-          {result && <pre style={{ margin: 0, fontFamily: 'inherit', whiteSpace: 'pre-wrap' }}>{result}</pre>}
+          {result && (
+            <>
+              <pre style={{ margin: 0, fontFamily: 'inherit', whiteSpace: 'pre-wrap' }}>{result}</pre>
+              {audioUrl && (
+                <div style={{ marginTop: '20px' }}>
+                  <audio controls src={audioUrl}></audio>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>
